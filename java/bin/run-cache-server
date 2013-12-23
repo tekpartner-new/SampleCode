@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cd `dirname $0`/..
+EXAMPLES_DIR=`pwd`
+
+. ./bin/function_set_env
+
+set_env
+
+$JAVA_HOME/bin/java $COH_OPTS -Xms128m -Xmx128m com.tangosol.net.DefaultCacheServer $*
+cd

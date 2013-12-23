@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE cache-config SYSTEM "cache-config.dtd">
+
+<cache-config>
+  <defaults>
+    <serializer>pof</serializer>
+  </defaults>
+
+  <caching-scheme-mapping>
+    <cache-mapping>
+      <cache-name>security*</cache-name>
+      <scheme-name>ExamplesPartitionedPofScheme</scheme-name>
+    </cache-mapping>
+  </caching-scheme-mapping>
+
+  <caching-schemes>
+    <distributed-scheme>
+      <scheme-name>ExamplesPartitionedPofScheme</scheme-name>
+      <service-name>PartitionedPofCache</service-name>
+      <backing-map-scheme>
+        <local-scheme>
+          <!-- each node will be limited to 32MB -->
+          <high-units>32M</high-units>
+          <unit-calculator>binary</unit-calculator>
+        </local-scheme>
+      </backing-map-scheme>
+      <autostart>true</autostart>
+    </distributed-scheme>
+
+    <!--
+    Proxy Service scheme that allows remote clients to connect to the
+    cluster over TCP/IP.
+    -->
+    <proxy-scheme>
+      <scheme-name>secure-proxy</scheme-name>
+      <service-name>ProxyService</service-name>
+
+      <thread-count system-property="tangosol.coherence.extend.threads">2</thread-count>
+
+      <acceptor-config>
+        <tcp-acceptor>
+          <local-address>
+            <address system-property="tangosol.coherence.extend.address">localhost</address>
+            <port system-property="tangosol.coherence.extend.port">9099</port>
+            <reusable>true</reusable>
+          </local-address>
+        </tcp-acceptor>
+      </acceptor-config>
+
+      <proxy-config>
+        <cache-service-proxy>
+          <class-name>com.tangosol.examples.security.EntitledCacheService</class-name>
+          <init-params>
+            <init-param>
+              <param-type>com.tangosol.net.CacheService</param-type>
+              <param-value>{service}</param-value>
+            </init-param>
+         </init-params>
+        </cache-service-proxy>
+
+        <invocation-service-proxy>
+          <class-name>com.tangosol.examples.security.EntitledInvocationService</class-name>
+          <init-params>
+            <init-param>
+              <param-type>com.tangosol.net.InvocationService</param-type>
+              <param-value>{service}</param-value>
+            </init-param>
+          </init-params>
+        </invocation-service-proxy>
+      </proxy-config>
+
+      <autostart>true</autostart>
+    </proxy-scheme>
+  </caching-schemes>
+</cache-config>

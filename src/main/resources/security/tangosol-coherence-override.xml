@@ -1,0 +1,15 @@
+<?xml version='1.0'?>
+
+<!DOCTYPE coherence SYSTEM "coherence.dtd">
+
+<coherence>
+  <security-config>
+    <identity-transformer>
+      <class-name>com.tangosol.examples.security.PasswordIdentityTransformer</class-name>
+    </identity-transformer>
+    <identity-asserter>
+      <class-name>com.tangosol.examples.security.PasswordIdentityAsserter</class-name>
+    </identity-asserter>
+    <subject-scope>true</subject-scope>
+  </security-config>
+</coherence>

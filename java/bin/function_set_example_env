@@ -1,0 +1,15 @@
+function set_example_env
+{
+SCRIPT_NAME=$0
+EXAMPLE=$1
+
+if [ -z $EXAMPLE ]; then
+    echo usage: $SCRIPT_NAME example
+    echo where \"example\" is a directory under com.tangosol.examples
+    echo
+    echo example: $SCRIPT_NAME contacts
+    echo
+    echo current directories: $(ls ./src/$EXAMPLE_PATH_BEGIN)
+    exit 1
+fi
+}

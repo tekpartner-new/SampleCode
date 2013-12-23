@@ -1,0 +1,46 @@
+function set_env
+{
+if [ -z $COHERENCE_HOME ]; then
+    echo COHERENCE_HOME is not set!
+    echo set COHERENCE_HOME to a Coherence 3.6 or later installation.
+    exit 1
+fi
+
+if [ -z $JAVA_HOME ]; then
+    echo JAVA_HOME is not set!
+    echo set JAVA_HOME to a JDK 1.5 or greater installation.
+    exit 1
+fi
+
+EXAMPLE_PATH_BEGIN=com/tangosol/examples
+CLASSES_DIR=$EXAMPLES_DIR/classes
+
+#$EXAMPLE is set in function set_example_env
+EXAMPLE_PATH=$EXAMPLE_PATH_BEGIN/$EXAMPLE
+EXAMPLE_CONFIG_DIR=$EXAMPLES_DIR/resource/$EXAMPLE
+
+POF_PATH=$EXAMPLE_PATH_BEGIN/pof
+CONFIG_DIR=$EXAMPLES_DIR/resource/config
+
+# run script uses client config (if available) but run-proxy and run-cache-server do not
+if [[ $0 == *run ]] && [[ -e $EXAMPLE_CONFIG_DIR/client-cache-config.xml ]]
+then
+    CACHE_CONFIG_FILE_NAME=client-cache-config.xml
+else
+    CACHE_CONFIG_FILE_NAME=examples-cache-config.xml
+fi
+
+# if config is found in examples resource directory, use it instead of basic config
+if [ -e $EXAMPLE_CONFIG_DIR/$CACHE_CONFIG_FILE_NAME ]; then
+    CACHE_CONFIG=$EXAMPLE_CONFIG_DIR/$CACHE_CONFIG_FILE_NAME
+else
+    CACHE_CONFIG=$CONFIG_DIR/$CACHE_CONFIG_FILE_NAME
+fi
+
+CP=$EXAMPLE_CONFIG_DIR:$CONFIG_DIR:$COHERENCE_HOME/lib/coherence.jar:$CLASSES_DIR
+
+COH_OPTS="$COH_OPTS -cp $CP"
+COH_OPTS="$COH_OPTS -Dtangosol.coherence.cacheconfig=$CACHE_CONFIG"
+# using non-default port to prevent accidentally joining other clusters
+COH_OPTS="$COH_OPTS -Dtangosol.coherence.clusterport=5555"
+}

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+cd `dirname $0`/..
+EXAMPLES_DIR=`pwd`
+EXAMPLE_PATH_BEGIN=com/tangosol/examples
+
+. ./bin/function_set_example_env
+. ./bin/function_set_env
+
+set_example_env $1
+set_env
+
+COH_OPTS="$COH_OPTS -Dtangosol.coherence.distributed.localstorage=false"
+COH_OPTS="$COH_OPTS -Dtangosol.coherence.log=${EXAMPLE}.log"
+
+echo redirecting Coherence logging to ${EXAMPLE}.log...
+
+$JAVA_HOME/bin/java -Xms64m -Xmx64m $COH_OPTS \
+    com.tangosol.examples.$EXAMPLE.Driver $EXAMPLE ${EXAMPLES_DIR} $*
