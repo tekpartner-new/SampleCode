@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE cache-config SYSTEM "cache-config.dtd">
+<cache-config>
+	<caching-scheme-mapping>
+		<cache-mapping>
+			<cache-name>DBBacked*</cache-name>
+			<scheme-name>distributed-db-backed</scheme-name>
+		</cache-mapping>
+	</caching-scheme-mapping>
+	<caching-schemes>
+		<!-- DB Backed Distributed caching scheme. -->
+		<distributed-scheme>
+			<scheme-name>distributed-db-backed</scheme-name>
+			<service-name>DistributedCache</service-name>
+			<backing-map-scheme>
+				<!-- Specified a read-write-backing-map-scheme as the backing map. This 
+					scheme defines a backing map, which provides a size-limited cache of a persistent 
+					store. Here, by setting the write-delay-seconds parameter to 0, you specify 
+					the write-through mechanism. -->
+				<read-write-backing-map-scheme>
+					<internal-cache-scheme>
+						<class-scheme>
+							<class-name>com.tangosol.util.ObservableHashMap</class-name>
+						</class-scheme>
+					</internal-cache-scheme>
+					<cachestore-scheme>
+						<class-scheme>
+							<class-name>com.pge.ei.demo.coherence.cacheanddatabase.DBCacheStore</class-name>
+							<init-params>
+								<init-param>
+									<param-type>java.lang.String</param-type>
+									<param-value>EMPLOYEES_TABLE</param-value>
+								</init-param>
+							</init-params>
+						</class-scheme>
+					</cachestore-scheme>
+					<read-only>false</read-only>
+					<!-- To make this a write-through cache just change the value below 
+						to 0 (zero) -->
+					<write-delay-seconds>0</write-delay-seconds>
+				</read-write-backing-map-scheme>
+			</backing-map-scheme>
+			<listener />
+			<autostart>true</autostart>
+		</distributed-scheme>
+	</caching-schemes>
+</cache-config>

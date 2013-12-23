@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+
+
+<!-- Note: This XML document is an example Coherence Cache Configuration 
+	deployment descriptor that should be customized (or replaced) for your particular 
+	caching requirements. The cache mappings and schemes declared in this descriptor 
+	are strictly for demonstration purposes and are not required. For detailed 
+	information on each of the elements that can be used in this descriptor please 
+	see the Coherence Cache Configuration deployment descriptor guide included 
+	in the Coherence distribution or the "Cache Configuration Elements" page 
+	on the Coherence Wiki (http://wiki.tangosol.com). -->
+
+<cache-config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config">
+	<!-- xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config 
+		http://xmlns.oracle.com/coherence/coherence-cache-config/1.1/coherence-cache-config.xsd"> -->
+	<!-- The defaults element defines factory-wide default settings. -->
+	<defaults>
+		<!-- Note: This element defines the default serializer for all services 
+			defined within this cache configuration descriptor. Valid values include 
+			full serializer definitions, as well as named references to serializers defined 
+			within the "serializers" element of the operational configuration. Example 
+			values include: java, pof. Default value is java. -->
+		<serializer system-property="tangosol.coherence.serializer" />
+
+		<!-- Note: This element defines the default socket-provider for all Coherence 
+			Extend services defined within this cache configuration descriptor. Valid 
+			values include full socket-provider definitions, as well as named references 
+			to providers defined within the "socket-providers" element of the operational 
+			configuration. This setting only specifies the default socket-provider for 
+			Coherence Extend services; TCMP's socket-provider is specified within the 
+			"unicast-listener" of the operational configuration. Example values include: 
+			system, ssl. Default value is system. -->
+		<socket-provider system-property="tangosol.coherence.socketprovider" />
+	</defaults>
+
+	<caching-scheme-mapping>
+		<cache-mapping>
+			<cache-name>DBBackedCache-Write-Behind</cache-name>
+			<scheme-name>distributed-db-backed-write-behind</scheme-name>
+		</cache-mapping>
+		<cache-mapping>
+			<cache-name>DBBackedCache-Write-Through</cache-name>
+			<scheme-name>distributed-db-backed-write-through</scheme-name>
+		</cache-mapping>
+	</caching-scheme-mapping>
+	<caching-schemes>
+		<!-- DB Backed Distributed caching scheme. -->
+		<distributed-scheme>
+			<scheme-name>distributed-db-backed-write-behind</scheme-name>
+			<service-name>DistributedCache</service-name>
+			<backing-map-scheme>
+				<!-- Specified a read-write-backing-map-scheme as the backing map. This 
+					scheme defines a backing map, which provides a size-limited cache of a persistent 
+					store. Here, by setting the write-delay-seconds parameter to 0, you specify 
+					the write-through mechanism. -->
+				<read-write-backing-map-scheme>
+					<scheme-name>catalogLoaderScheme</scheme-name>
+					<internal-cache-scheme>
+						<local-scheme>
+							<scheme-ref>catalog-eviction-1</scheme-ref>
+						</local-scheme>
+					</internal-cache-scheme>
+					<cachestore-scheme>
+						<class-scheme>
+							<class-name>com.pge.ei.demo.coherence.cacheanddatabase.DBCacheStore
+							</class-name>
+							<init-params>
+								<init-param>
+									<param-type>java.lang.String</param-type>
+									<param-value>CATALOG</param-value>
+								</init-param>
+							</init-params>
+						</class-scheme>
+					</cachestore-scheme>
+					<refresh-ahead-factor>0.5</refresh-ahead-factor>
+					<read-only>false</read-only>
+					<!-- To make this a write-through cache just change the value below 
+						to 0 (zero) -->
+					<write-delay-seconds>10</write-delay-seconds>
+				</read-write-backing-map-scheme>
+			</backing-map-scheme>
+			<listener />
+			<autostart>true</autostart>
+		</distributed-scheme>
+		<distributed-scheme>
+			<scheme-name>distributed-db-backed-write-through</scheme-name>
+			<service-name>DistributedCache</service-name>
+			<backing-map-scheme>
+				<!-- Specified a read-write-backing-map-scheme as the backing map. This 
+					scheme defines a backing map, which provides a size-limited cache of a persistent 
+					store. Here, by setting the write-delay-seconds parameter to 0, you specify 
+					the write-through mechanism. -->
+				<read-write-backing-map-scheme>
+					<scheme-name>catalogLoaderScheme</scheme-name>
+					<internal-cache-scheme>
+						<local-scheme>
+							<scheme-ref>catalog-eviction-1</scheme-ref>
+						</local-scheme>
+					</internal-cache-scheme>
+					<cachestore-scheme>
+						<class-scheme>
+							<class-name>com.pge.ei.demo.coherence.cacheanddatabase.DBCacheStore
+							</class-name>
+							<init-params>
+								<init-param>
+									<param-type>java.lang.String</param-type>
+									<param-value>CATALOG</param-value>
+								</init-param>
+							</init-params>
+						</class-scheme>
+					</cachestore-scheme>
+					<refresh-ahead-factor>0.5</refresh-ahead-factor>
+					<read-only>false</read-only>
+					<!-- To make this a write-through cache just change the value below 
+						to 0 (zero) -->
+					<write-delay-seconds>0</write-delay-seconds>
+				</read-write-backing-map-scheme>
+			</backing-map-scheme>
+			<listener />
+			<autostart>true</autostart>
+		</distributed-scheme>
+		<local-scheme>
+			<scheme-name>catalog-eviction-1</scheme-name>
+			<expiry-delay>20s</expiry-delay>
+		</local-scheme>
+	</caching-schemes>
+</cache-config>
